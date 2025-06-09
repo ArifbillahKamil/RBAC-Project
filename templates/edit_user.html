@@ -1,0 +1,17 @@
+<h2>Edit User</h2>
+<form method="POST">
+    <label>Email:</label>
+    <input type="email" name="email" value="{{ user.email }}" required><br>
+
+    <label>Role:</label>
+    <select name="role_id" required>
+        {% for role in roles %}
+            <option value="{{ role.id }}" {% if role.id == user.role_id %}selected{% endif %}>
+                {{ role.name }}
+            </option>
+        {% endfor %}
+    </select><br>
+
+    <button type="submit">Simpan Perubahan</button>
+</form>
+<a href="{{ url_for('main.manage_users') }}">Kembali ke daftar user</a>

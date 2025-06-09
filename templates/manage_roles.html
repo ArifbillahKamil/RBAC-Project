@@ -1,0 +1,21 @@
+<table border="1">
+  <tr>
+    <th>ID</th>
+    <th>Nama Role</th>
+    <th>Aksi</th>
+  </tr>
+  {% for role in roles %}
+  <tr>
+    <td>{{ role.id }}</td>
+    <td>{{ role.name }}</td>
+    <td>
+      <a href="{{ url_for('main.edit_role_form', role_id=role.id) }}">Edit</a> |
+      <a
+        href="{{ url_for('main.delete_role', role_id=role.id) }}"
+        onclick="return confirm('Yakin ingin menghapus role ini?')"
+        >Hapus</a
+      >
+    </td>
+  </tr>
+  {% endfor %}
+</table>

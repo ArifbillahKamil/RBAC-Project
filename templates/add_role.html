@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Tambah Role</title>
+  </head>
+  <body>
+    <h1>Tambah Role Baru</h1>
+    <a href="{{ url_for('main.manage_roles') }}">Kembali ke Manajemen Role</a>
+    <form method="POST">
+      <label>Nama Role:</label>
+      <input type="text" name="name" required />
+      <button type="submit">Simpan</button>
+    </form>
+  </body>
+</html>

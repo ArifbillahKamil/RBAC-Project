@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Edit Role</title>
+  </head>
+  <body>
+    <h1>Edit Role</h1>
+    <form method="POST">
+      <label for="name">Nama Role:</label>
+      <input
+        type="text"
+        id="name"
+        name="name"
+        value="{{ role.name }}"
+        required
+      />
+      <button type="submit">Simpan</button>
+    </form>
+    <br />
+    <a href="{{ url_for('main.manage_roles') }}">Kembali</a>
+  </body>
+</html>
