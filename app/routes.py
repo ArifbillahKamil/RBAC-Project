@@ -1,5 +1,6 @@
 from flask import Blueprint, render_template, request, redirect, url_for, flash
 from flask_login import login_required, current_user
+from .models import Mahasiswa, User, Role, db
 
 main = Blueprint('main', __name__)
 
@@ -172,3 +173,94 @@ def delete_role(role_id):
     db.session.commit()
     flash('Role berhasil dihapus.')
     return redirect(url_for('main.manage_roles'))
+
+@main.route('/admin/mahasiswa')
+@login_required
+def manage_mahasiswa():
+    if current_user.role.name != 'admin':
+        return "Akses ditolak!", 403
+
+    # Ambil query dari parameter GET
+    search_query = request.args.get('q', '')
+
+    if search_query:
+        # Filter berdasarkan nama, nim, atau jurusan (case insensitive)
+        mahasiswa = Mahasiswa.query.filter(
+            (Mahasiswa.nama.ilike(f'%{search_query}%')) |
+            (Mahasiswa.nim.ilike(f'%{search_query}%')) |
+            (Mahasiswa.jurusan.ilike(f'%{search_query}%'))
+        ).all()
+    else:
+        mahasiswa = Mahasiswa.query.all()
+
+    return render_template('manage_mahasiswa.html', mahasiswa=mahasiswa, search_query=search_query)
+
+
+
+@main.route('/admin/mahasiswa/add', methods=['GET', 'POST'])
+@login_required
+def add_mahasiswa():
+    if current_user.role.name != 'admin':
+        return "Akses ditolak!", 403
+
+    if request.method == 'POST':
+        nama = request.form['nama']
+        nim = request.form['nim']
+        jurusan = request.form['jurusan']
+
+        # Cek apakah NIM sudah ada
+        existing = Mahasiswa.query.filter_by(nim=nim).first()
+        if existing:
+            flash('NIM sudah digunakan mahasiswa lain.', 'error')
+            return redirect(url_for('main.add_mahasiswa'))
+
+        new_mhs = Mahasiswa(nama=nama, nim=nim, jurusan=jurusan)
+        db.session.add(new_mhs)
+        db.session.commit()
+        flash("Mahasiswa berhasil ditambahkan.")
+        return redirect(url_for('main.manage_mahasiswa'))
+
+    return render_template('add_mahasiswa.html')
+
+@main.route('/admin/mahasiswa/edit/<int:mhs_id>', methods=['GET', 'POST'])
+@login_required
+def edit_mahasiswa_form(mhs_id):
+    if current_user.role.name != 'admin':
+        return "Akses ditolak!", 403
+
+    mhs = Mahasiswa.query.get_or_404(mhs_id)
+
+    if request.method == 'POST':
+        nama = request.form['nama']
+        nim = request.form['nim']
+        jurusan = request.form['jurusan']
+
+        # Validasi duplikat NIM
+        existing = Mahasiswa.query.filter_by(nim=nim).first()
+        if existing and existing.id != mhs.id:
+            flash('NIM sudah digunakan mahasiswa lain.', 'error')
+            return redirect(url_for('main.edit_mahasiswa_form', mhs_id=mhs.id))
+
+        mhs.nama = nama
+        mhs.nim = nim
+        mhs.jurusan = jurusan
+        db.session.commit()
+        flash("Data mahasiswa diperbarui.")
+        return redirect(url_for('main.manage_mahasiswa'))
+
+    return render_template('edit_mahasiswa.html', mhs=mhs)
+
+
+@main.route('/admin/mahasiswa/delete/<int:mhs_id>', methods=['POST', 'GET'])
+@login_required
+def delete_mahasiswa(mhs_id):
+    if current_user.role.name != 'admin':
+        return "Akses ditolak!", 403
+
+    from .models import Mahasiswa, db
+    mhs = Mahasiswa.query.get_or_404(mhs_id)
+    db.session.delete(mhs)
+    db.session.commit()
+    flash("Mahasiswa berhasil dihapus.")
+    return redirect(url_for('main.manage_mahasiswa'))
+
