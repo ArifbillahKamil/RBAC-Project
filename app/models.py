@@ -22,3 +22,9 @@ class Mahasiswa(db.Model):
     nama = db.Column(db.String(100), nullable=False)
     nim = db.Column(db.String(20), unique=True, nullable=False)
     jurusan = db.Column(db.String(50), nullable=False)
+
+class Dosen(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    nama = db.Column(db.String(100), nullable=False)
+    nip = db.Column(db.String(30), nullable=False, unique=True)
+    prodi = db.Column(db.String(100), nullable=False)

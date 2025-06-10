@@ -1,6 +1,6 @@
 from flask import Blueprint, render_template, request, redirect, url_for, flash
 from flask_login import login_required, current_user
-from .models import Mahasiswa, User, Role, db
+from .models import Mahasiswa, User, Role, db, Dosen
 
 main = Blueprint('main', __name__)
 
@@ -264,3 +264,84 @@ def delete_mahasiswa(mhs_id):
     flash("Mahasiswa berhasil dihapus.")
     return redirect(url_for('main.manage_mahasiswa'))
 
+@main.route('/admin/dosen')
+@login_required
+def manage_dosen():
+    if current_user.role.name != 'admin':
+        return "Akses ditolak!", 403
+
+    search_query = request.args.get('q', '')
+
+    if search_query:
+        dosen = Dosen.query.filter(
+            (Dosen.nama.ilike(f'%{search_query}%')) |
+            (Dosen.nip.ilike(f'%{search_query}%')) |
+            (Dosen.bidang.ilike(f'%{search_query}%'))
+        ).all()
+    else:
+        dosen = Dosen.query.all()
+
+    return render_template('dosen.html', dosen=dosen, search_query=search_query)
+
+@main.route('/admin/dosen/add', methods=['GET', 'POST'])
+@login_required
+def add_dosen():
+    if current_user.role.name != 'admin':
+        return "Akses ditolak!", 403
+
+    if request.method == 'POST':
+        nama = request.form['nama']
+        nip = request.form['nip']
+        bidang = request.form['bidang']
+
+        existing = Dosen.query.filter_by(nip=nip).first()
+        if existing:
+            flash('NIP sudah digunakan oleh dosen lain.', 'error')
+            return redirect(url_for('main.add_dosen'))
+
+        new_dosen = Dosen(nama=nama, nip=nip, bidang=bidang)
+        db.session.add(new_dosen)
+        db.session.commit()
+        flash("Dosen berhasil ditambahkan.")
+        return redirect(url_for('main.manage_dosen'))
+
+    return render_template('add_dosen.html')
+
+@main.route('/admin/dosen/edit/<int:dosen_id>', methods=['GET', 'POST'])
+@login_required
+def edit_dosen(dosen_id):
+    if current_user.role.name != 'admin':
+        return "Akses ditolak!", 403
+
+    dosen = Dosen.query.get_or_404(dosen_id)
+
+    if request.method == 'POST':
+        nama = request.form['nama']
+        nip = request.form['nip']
+        bidang = request.form['bidang']
+
+        existing = Dosen.query.filter_by(nip=nip).first()
+        if existing and existing.id != dosen.id:
+            flash('NIP sudah digunakan oleh dosen lain.', 'error')
+            return redirect(url_for('main.edit_dosen', dosen_id=dosen.id))
+
+        dosen.nama = nama
+        dosen.nip = nip
+        dosen.bidang = bidang
+        db.session.commit()
+        flash("Data dosen diperbarui.")
+        return redirect(url_for('main.manage_dosen'))
+
+    return render_template('edit_dosen.html', dosen=dosen)
+
+@main.route('/admin/dosen/delete/<int:dosen_id>', methods=['GET', 'POST'])
+@login_required
+def delete_dosen(dosen_id):
+    if current_user.role.name != 'admin':
+        return "Akses ditolak!", 403
+
+    dosen = Dosen.query.get_or_404(dosen_id)
+    db.session.delete(dosen)
+    db.session.commit()
+    flash("Dosen berhasil dihapus.")
+    return redirect(url_for('main.manage_dosen'))
