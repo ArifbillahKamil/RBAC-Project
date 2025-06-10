@@ -1,0 +1,24 @@
+{% extends 'base.html' %} {% block title %}Tambah Dosen{% endblock %} {% block
+content %}
+<div class="container mt-4">
+  <h2>Tambah Dosen</h2>
+  <form method="post" action="{{ url_for('main.add_dosen') }}">
+    <div class="mb-3">
+      <label for="nama" class="form-label">Nama</label>
+      <input type="text" class="form-control" name="nama" required />
+    </div>
+    <div class="mb-3">
+      <label for="nip" class="form-label">NIP</label>
+      <input type="text" class="form-control" name="nip" required />
+    </div>
+    <div class="mb-3">
+      <label for="bidang" class="form-label">Bidang</label>
+      <input type="text" class="form-control" name="bidang" required />
+    </div>
+    <button type="submit" class="btn btn-primary">Simpan</button>
+    <a href="{{ url_for('main.manage_dosen') }}" class="btn btn-secondary"
+      >Batal</a
+    >
+  </form>
+</div>
+{% endblock %}

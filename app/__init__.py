@@ -2,6 +2,7 @@ import os
 from flask import Flask
 from .models import db
 from flask_login import LoginManager
+from flask_migrate import Migrate
 
 def create_app():
     # Dapatkan path absolut ke folder "templates" dan "static"
@@ -14,6 +15,7 @@ def create_app():
     app.config.from_object('config.Config')
 
     db.init_app(app)
+    migrate = Migrate(app, db)  
 
     login_manager = LoginManager()
     login_manager.login_view = 'auth.login'
