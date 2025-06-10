@@ -1,83 +1,104 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Edit Mahasiswa</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
     <style>
-        /* Warna tema utama */
-        :root {
-            --primary-color: #ff00aa;
-        }
+      /* Warna tema utama */
+      :root {
+        --primary-color: #ff00aa;
+      }
 
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f8f9fa;
-        }
+      body {
+        font-family: Arial, sans-serif;
+        background-color: #f8f9fa;
+      }
 
-        .container {
-            margin-top: 50px;
-        }
+      .container {
+        margin-top: 50px;
+      }
 
-        h2 {
-            color: var(--primary-color);
-            text-align: center;
-            margin-bottom: 30px;
-        }
+      h2 {
+        color: var(--primary-color);
+        text-align: center;
+        margin-bottom: 30px;
+      }
 
-        label {
-            font-weight: bold;
-            margin-bottom: 0.5rem;
-            display: block;
-        }
+      label {
+        font-weight: bold;
+        margin-bottom: 0.5rem;
+        display: block;
+      }
 
-        input[type="text"] {
-            width: 100%;
-            padding: 0.5rem;
-            margin-bottom: 1rem;
-            border: 1px solid #ced4da;
-            border-radius: 0.25rem;
-        }
+      input[type="text"] {
+        width: 100%;
+        padding: 0.5rem;
+        margin-bottom: 1rem;
+        border: 1px solid #ced4da;
+        border-radius: 0.25rem;
+      }
 
-        button[type="submit"] {
-            background-color: var(--primary-color);
-            color: white;
-            padding: 0.75rem 1.5rem;
-            border: none;
-            border-radius: 0.25rem;
-            cursor: pointer;
-            transition: background-color 0.3s ease;
-        }
+      button[type="submit"] {
+        background-color: var(--primary-color);
+        color: white;
+        padding: 0.75rem 1.5rem;
+        border: none;
+        border-radius: 0.25rem;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+      }
 
-        button[type="submit"]:hover {
-            background-color: #cc0088;
-        }
+      button[type="submit"]:hover {
+        background-color: #cc0088;
+      }
     </style>
-</head>
-<body>
+  </head>
+  <body>
     <div class="container">
-        <h2>Edit Mahasiswa</h2>
-        <form method="POST">
-            <div class="mb-3">
-                <label for="nama" class="form-label">Nama:</label>
-                <input type="text" class="form-control" id="nama" name="nama" value="{{ mhs.nama }}" />
-            </div>
+      <h2>Edit Mahasiswa</h2>
+      <form method="POST">
+        <div class="mb-3">
+          <label for="nama" class="form-label">Nama:</label>
+          <input
+            type="text"
+            class="form-control"
+            id="nama"
+            name="nama"
+            value="{{ mhs.nama }}"
+          />
+        </div>
 
-            <div class="mb-3">
-                <label for="nim" class="form-label">NIM:</label>
-                <input type="text" class="form-control" id="nim" name="nim" value="{{ mhs.nim }}" />
-            </div>
+        <div class="mb-3">
+          <label for="nim" class="form-label">NIM:</label>
+          <input
+            type="text"
+            class="form-control"
+            id="nim"
+            name="nim"
+            value="{{ mhs.nim }}"
+          />
+        </div>
 
-            <div class="mb-3">
-                <label for="jurusan" class="form-label">Jurusan:</label>
-                <input type="text" class="form-control" id="jurusan" name="jurusan" value="{{ mhs.jurusan }}" />
-            </div>
+        <div class="mb-3">
+          <label for="jurusan" class="form-label">Jurusan:</label>
+          <input
+            type="text"
+            class="form-control"
+            id="jurusan"
+            name="jurusan"
+            value="{{ mhs.jurusan }}"
+          />
+        </div>
 
-            <button type="submit" class="btn btn-primary">Simpan Perubahan</button>
-        </form>
+        <button type="submit" class="btn btn-primary">Simpan Perubahan</button>
+      </form>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-</body>
+  </body>
 </html>
