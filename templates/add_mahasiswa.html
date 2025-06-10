@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Tambah Mahasiswa</title>
+  </head>
+  <body>
+    <h1>Tambah Mahasiswa</h1>
+    <a href="{{ url_for('main.manage_mahasiswa') }}"
+      >Kembali ke daftar mahasiswa</a
+    >
+
+    <form method="POST">
+      <label>Nama:</label><br />
+      <input type="text" name="nama" /><br />
+
+      <label>NIM:</label><br />
+      <input type="text" name="nim" /><br />
+
+      <label>Jurusan:</label><br />
+      <input type="text" name="jurusan" /><br /><br />
+
+      <button type="submit">Simpan</button>
+    </form>
+
+    <input type="text" name="nim" required />
+  </body>
+</html>

@@ -1,0 +1,32 @@
+<h2>Data Mahasiswa</h2>
+
+<a href="{{ url_for('main.add_mahasiswa') }}">Tambah Mahasiswa</a>
+
+<!-- 🔍 Form Pencarian -->
+<form method="get" action="{{ url_for('main.manage_mahasiswa') }}">
+  <input
+    type="text"
+    name="q"
+    placeholder="Cari nama / NIM / jurusan"
+    value="{{ search_query }}"
+  />
+  <button type="submit">Cari</button>
+</form>
+
+<!-- 📋 Tabel Mahasiswa -->
+<table border="1">
+  <tr>
+    <th>ID</th>
+    <th>Nama</th>
+    <th>NIM</th>
+    <th>Jurusan</th>
+  </tr>
+  {% for mhs in mahasiswas %}
+  <tr>
+    <td>{{ mhs.id }}</td>
+    <td>{{ mhs.nama }}</td>
+    <td>{{ mhs.nim }}</td>
+    <td>{{ mhs.jurusan }}</td>
+  </tr>
+  {% endfor %}
+</table>

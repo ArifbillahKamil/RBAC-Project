@@ -1,14 +1,47 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
   <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Login</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+      :root {
+        --primary-color: #ff00aa;
+      }
+    </style>
   </head>
-  <body>
-    <h1>Login Page</h1>
-    <form method="POST">
-      <input type="email" name="email" placeholder="Email" /><br />
-      <input type="password" name="password" placeholder="Password" /><br />
-      <button type="submit">Login</button>
-    </form>
+  <body class="bg-gray-100 flex items-center justify-center h-screen">
+    <div class="bg-white p-8 rounded-2xl shadow-lg w-full max-w-sm">
+      <h1
+        class="text-3xl font-bold mb-6 text-center"
+        style="color: var(--primary-color)"
+      >
+        Login Page
+      </h1>
+      <form method="POST" class="space-y-4">
+        <input
+          type="email"
+          name="email"
+          placeholder="Email"
+          required
+          class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#ff00aa]"
+        />
+        <input
+          type="password"
+          name="password"
+          placeholder="Password"
+          required
+          class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#ff00aa]"
+        />
+        <button
+          type="submit"
+          class="w-full bg-[#ff00aa] text-white py-2 rounded-lg hover:bg-pink-600 transition-colors"
+        >
+          Login
+        </button>
+      </form>
+    </div>
   </body>
 </html>
