@@ -1,24 +1,31 @@
-{% extends 'base.html' %} {% block title %}Tambah Dosen{% endblock %} {% block
-content %}
-<div class="container mt-4">
-  <h2>Tambah Dosen</h2>
-  <form method="post">
-    <div class="mb-3">
-      <label for="nama" class="form-label">Nama</label>
-      <input type="text" class="form-control" name="nama" required />
+{% extends 'base.html' %}
+{% block title %}Tambah Dosen{% endblock %}
+{% block content %}
+<div class="container mt-5">
+  <div class="card shadow-lg rounded-4">
+    <div class="card-header text-white" style="background-color: #ff00aa;">
+      <h4 class="mb-0">Tambah Dosen</h4>
     </div>
-    <div class="mb-3">
-      <label for="nip" class="form-label">NIP</label>
-      <input type="text" class="form-control" name="nip" required />
+    <div class="card-body p-4">
+      <form method="post">
+        <div class="mb-3">
+          <label for="nama" class="form-label">Nama</label>
+          <input type="text" class="form-control rounded-3" name="nama" required />
+        </div>
+        <div class="mb-3">
+          <label for="nip" class="form-label">NIP</label>
+          <input type="text" class="form-control rounded-3" name="nip" required />
+        </div>
+        <div class="mb-3">
+          <label for="prodi" class="form-label">Prodi</label>
+          <input type="text" class="form-control rounded-3" name="prodi" required />
+        </div>
+        <div class="d-flex justify-content-end gap-2">
+          <button type="submit" class="btn text-white" style="background-color: #ff00aa;">Simpan</button>
+          <a href="{{ url_for('dosen.manage_dosen') }}" class="btn btn-outline-secondary">Batal</a>
+        </div>
+      </form>
     </div>
-    <div class="mb-3">
-      <label for="prodi" class="form-label">Prodi</label>
-      <input type="text" class="form-control" name="prodi" required />
-    </div>
-    <button type="submit" class="btn btn-primary">Simpan</button>
-    <a href="{{ url_for('dosen.manage_dosen') }}" class="btn btn-secondary"
-      >Batal</a
-    >
-  </form>
+  </div>
 </div>
 {% endblock %}
