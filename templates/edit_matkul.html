@@ -1,0 +1,18 @@
+<h2>Edit Mata Kuliah</h2>
+<form method="POST">
+  <label>Nama:</label><br />
+  <input type="text" name="nama" value="{{ matkul.nama }}" required /><br />
+  <label>Kode:</label><br />
+  <input type="text" name="kode" value="{{ matkul.kode }}" required /><br />
+  <label>SKS:</label><br />
+  <input type="number" name="sks" value="{{ matkul.sks }}" required /><br />
+  <label>Jurusan:</label><br />
+  <input
+    type="text"
+    name="jurusan"
+    value="{{ matkul.jurusan }}"
+    required
+  /><br /><br />
+  <button type="submit">Simpan Perubahan</button>
+</form>
+<a href="{{ url_for('admin_matkul.index') }}">Kembali</a>

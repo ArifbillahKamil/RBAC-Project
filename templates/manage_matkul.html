@@ -1,0 +1,29 @@
+<h2>Manajemen Mata Kuliah</h2>
+<a href="{{ url_for('admin_matkul.tambah') }}">+ Tambah Mata Kuliah</a>
+<table border="1">
+  <tr>
+    <th>ID</th>
+    <th>Nama</th>
+    <th>Kode</th>
+    <th>SKS</th>
+    <th>Jurusan</th>
+    <th>Aksi</th>
+  </tr>
+  {% for mk in mata_kuliah %}
+  <tr>
+    <td>{{ mk.id }}</td>
+    <td>{{ mk.nama }}</td>
+    <td>{{ mk.kode }}</td>
+    <td>{{ mk.sks }}</td>
+    <td>{{ mk.jurusan }}</td>
+    <td>
+      <a href="{{ url_for('admin_matkul.edit', id=mk.id) }}">Edit</a> |
+      <a
+        href="{{ url_for('admin_matkul.hapus', id=mk.id) }}"
+        onclick="return confirm('Yakin ingin menghapus?')"
+        >Hapus</a
+      >
+    </td>
+  </tr>
+  {% endfor %}
+</table>

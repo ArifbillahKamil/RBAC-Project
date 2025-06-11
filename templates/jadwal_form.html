@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h2>{{ 'Edit' if action == 'edit' else 'Tambah' }} Jadwal</h2>
+
+<form method="POST">
+    <label>Mahasiswa</label>
+    <select name="mahasiswa_id" required>
+        {% for m in mahasiswas %}
+            <option value="{{ m.id }}" {% if jadwal and m.id == jadwal.mahasiswa_id %}selected{% endif %}>{{ m.nama }}</option>
+        {% endfor %}
+    </select><br>
+
+    <label>Dosen</label>
+    <select name="dosen_id" required>
+        {% for d in dosens %}
+            <option value="{{ d.id }}" {% if jadwal and d.id == jadwal.dosen_id %}selected{% endif %}>{{ d.nama }}</option>
+        {% endfor %}
+    </select><br>
+
+    <label>Mata Kuliah</label>
+    <select name="mata_kuliah" required>
+        {% for mk in mata_kuliah %}
+            <option value="{{ mk.nama }}" {% if jadwal and mk.nama == jadwal.mata_kuliah %}selected{% endif %}>{{ mk.nama }}</option>
+        {% endfor %}
+    </select><br>
+
+    <label>Hari</label>
+    <input type="text" name="hari" value="{{ jadwal.hari if jadwal else '' }}" required><br>
+
+    <label>Jam Mulai</label>
+    <input type="time" name="jam_mulai" value="{{ jadwal.jam_mulai if jadwal else '' }}" required><br>
+
+    <label>Jam Selesai</label>
+    <input type="time" name="jam_selesai" value="{{ jadwal.jam_selesai if jadwal else '' }}" required><br>
+
+    <button type="submit">{{ 'Update' if action == 'edit' else 'Tambah' }}</button>
+</form>
+
+<a href="{{ url_for('admin_jadwal.list_jadwal') }}">Kembali ke Daftar Jadwal</a>
+{% endblock %}

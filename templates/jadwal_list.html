@@ -1,0 +1,46 @@
+{% extends 'base.html' %} {% block content %}
+<h2>Manajemen Jadwal</h2>
+
+<a href="{{ url_for('admin_jadwal.tambah_jadwal') }}">+ Tambah Jadwal</a>
+
+<table border="1" cellpadding="8" cellspacing="0">
+  <thead>
+    <tr>
+      <th>No</th>
+      <th>Mahasiswa</th>
+      <th>Dosen</th>
+      <th>Mata Kuliah</th>
+      <th>Hari</th>
+      <th>Jam Mulai</th>
+      <th>Jam Selesai</th>
+      <th>Aksi</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for j in jadwals %}
+    <tr>
+      <td>{{ loop.index }}</td>
+      <td>{{ j.mahasiswa.nama }}</td>
+      <td>{{ j.dosen.nama }}</td>
+      <td>{{ j.mata_kuliah }}</td>
+      <td>{{ j.hari }}</td>
+      <td>{{ j.jam_mulai }}</td>
+      <td>{{ j.jam_selesai }}</td>
+      <td>
+        <a href="{{ url_for('admin_jadwal.edit_jadwal', jadwal_id=j.id) }}"
+          >Edit</a
+        >
+        |
+        <a href="{{ url_for('admin_jadwal.hapus_jadwal', jadwal_id=j.id) }}"
+          >Hapus</a
+        >
+      </td>
+    </tr>
+    {% else %}
+    <tr>
+      <td colspan="8">Belum ada data jadwal.</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endblock %}

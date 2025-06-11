@@ -28,3 +28,26 @@ class Dosen(db.Model):
     nama = db.Column(db.String(100), nullable=False)
     nip = db.Column(db.String(30), nullable=False, unique=True)
     prodi = db.Column(db.String(100), nullable=False)
+
+class MataKuliah(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    kode = db.Column(db.String(10), unique=True, nullable=False)
+    nama = db.Column(db.String(100), nullable=False)
+    sks = db.Column(db.Integer, nullable=False)
+
+    def __repr__(self):
+        return f'<MataKuliah {self.kode} - {self.nama}>'
+
+class Jadwal(db.Model):
+    __tablename__ = 'jadwal'
+
+    id = db.Column(db.Integer, primary_key=True)
+    mahasiswa_id = db.Column(db.Integer, db.ForeignKey('mahasiswa.id'), nullable=False)
+    dosen_id = db.Column(db.Integer, db.ForeignKey('dosen.id'), nullable=False)
+    mata_kuliah = db.Column(db.String(100), nullable=False)
+    hari = db.Column(db.String(20), nullable=False)
+    jam_mulai = db.Column(db.Time, nullable=False)
+    jam_selesai = db.Column(db.Time, nullable=False)
+
+    mahasiswa = db.relationship('Mahasiswa', backref='jadwal')
+    dosen = db.relationship('Dosen', backref='jadwal')
