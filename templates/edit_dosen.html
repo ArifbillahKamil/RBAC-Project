@@ -2,10 +2,7 @@
 content %}
 <div class="container mt-4">
   <h2>Edit Dosen</h2>
-  <form
-    method="post"
-    action="{{ url_for('main.edit_dosen', dosen_id=dosen.id) }}"
-  >
+  <form method="post">
     <div class="mb-3">
       <label for="nama" class="form-label">Nama</label>
       <input
@@ -27,17 +24,17 @@ content %}
       />
     </div>
     <div class="mb-3">
-      <label for="bidang" class="form-label">Bidang</label>
+      <label for="prodi" class="form-label">Prodi</label>
       <input
         type="text"
         class="form-control"
-        name="bidang"
-        value="{{ dosen.bidang }}"
+        name="prodi"
+        value="{{ dosen.prodi }}"
         required
       />
     </div>
     <button type="submit" class="btn btn-primary">Update</button>
-    <a href="{{ url_for('main.manage_dosen') }}" class="btn btn-secondary"
+    <a href="{{ url_for('dosen.manage_dosen') }}" class="btn btn-secondary"
       >Batal</a
     >
   </form>

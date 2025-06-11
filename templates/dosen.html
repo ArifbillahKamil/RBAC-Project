@@ -1,69 +1,33 @@
-{% extends 'base.html' %} {% block title %}Manajemen Dosen{% endblock %} {%
-block content %}
-<div class="container mt-4">
-  <h2>Manajemen Dosen</h2>
-
-  <form
-    method="get"
-    action="{{ url_for('main.manage_dosen') }}"
-    class="mb-3 d-flex"
-  >
-    <input
-      type="text"
-      name="q"
-      class="form-control me-2"
-      placeholder="Cari nama, NIP, bidang..."
-      value="{{ search_query }}"
-    />
-    <button type="submit" class="btn btn-outline-primary">Cari</button>
-  </form>
-
-  <a href="{{ url_for('main.add_dosen') }}" class="btn btn-success mb-3"
-    >+ Tambah Dosen</a
-  >
-
-  {% if dosen_list %}
-  <table class="table table-striped">
-    <thead>
-      <tr>
-        <th>Nama</th>
-        <th>NIP</th>
-        <th>Bidang</th>
-        <th>Aksi</th>
-      </tr>
-    </thead>
-    <tbody>
-      {% for dosen in dosen_list %}
-      <tr>
-        <td>{{ dosen.nama }}</td>
-        <td>{{ dosen.nip }}</td>
-        <td>{{ dosen.bidang }}</td>
-        <td>
-          <a
-            href="{{ url_for('main.edit_dosen', dosen_id=dosen.id) }}"
-            class="btn btn-sm btn-warning"
-            >Edit</a
-          >
-          <form
-            action="{{ url_for('main.delete_dosen', dosen_id=dosen.id) }}"
-            method="post"
-            style="display: inline"
-          >
-            <button
-              type="submit"
-              class="btn btn-sm btn-danger"
-              onclick="return confirm('Yakin ingin menghapus?')"
-            >
-              Hapus
-            </button>
-          </form>
-        </td>
-      </tr>
-      {% endfor %}
-    </tbody>
-  </table>
-  {% else %}
-  <p>Tidak ada dosen ditemukan.</p>
-  {% endif %}
-</div>
-{% endblock %}
+<table class="table">
+  <thead>
+    <tr>
+      <th>Nama</th>
+      <th>NIP</th>
+      <th>Prodi</th>
+      <!-- Tambahkan ini -->
+      <th>Aksi</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for d in dosen %}
+    <tr>
+      <td>{{ d.nama }}</td>
+      <td>{{ d.nip }}</td>
+      <td>{{ d.prodi }}</td>
+      <!-- Tampilkan prodi -->
+      <td>
+        <a
+          href="{{ url_for('main.edit_dosen', dosen_id=d.id) }}"
+          class="btn btn-sm btn-warning"
+          >Edit</a
+        >
+        <a
+          href="{{ url_for('main.delete_dosen', dosen_id=d.id) }}"
+          class="btn btn-sm btn-danger"
+          >Hapus</a
+        >
+      </td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>

@@ -46,6 +46,5 @@ class Jadwal(db.Model):
     hari = db.Column(db.String(20), nullable=False)
     jam_mulai = db.Column(db.Time, nullable=False)
     jam_selesai = db.Column(db.Time, nullable=False)
-
     mahasiswa = db.relationship('Mahasiswa', backref='jadwal')
     dosen = db.relationship('Dosen', backref='jadwal')
