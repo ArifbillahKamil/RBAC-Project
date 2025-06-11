@@ -1,41 +1,56 @@
-{% extends 'base.html' %} {% block content %}
-<div class="container mt-4">
-  <h2>Edit Dosen</h2>
-  <form method="post">
-    <div class="mb-3">
-      <label>Nama</label>
-      <input
-        type="text"
-        class="form-control"
-        name="nama"
-        value="{{ dosen.nama }}"
-        required
-      />
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-5">
+  <div class="card shadow rounded-4 border-0">
+    <div class="card-header text-white text-center" style="background-color: #ff00aa;">
+      <h3 class="mb-0">Edit Dosen</h3>
     </div>
-    <div class="mb-3">
-      <label>NIP</label>
-      <input
-        type="text"
-        class="form-control"
-        name="nip"
-        value="{{ dosen.nip }}"
-        required
-      />
+    <div class="card-body">
+      <form method="post">
+        <div class="mb-3">
+          <label for="nama" class="form-label">Nama</label>
+          <input
+            type="text"
+            id="nama"
+            name="nama"
+            class="form-control"
+            value="{{ dosen.nama }}"
+            required
+          />
+        </div>
+        <div class="mb-3">
+          <label for="nip" class="form-label">NIP</label>
+          <input
+            type="text"
+            id="nip"
+            name="nip"
+            class="form-control"
+            value="{{ dosen.nip }}"
+            required
+          />
+        </div>
+        <div class="mb-4">
+          <label for="prodi" class="form-label">Prodi</label>
+          <input
+            type="text"
+            id="prodi"
+            name="prodi"
+            class="form-control"
+            value="{{ dosen.prodi }}"
+            required
+          />
+        </div>
+        <div class="d-flex justify-content-between">
+          <a href="{{ url_for('dosen.manage_dosen') }}" class="btn btn-outline-secondary">
+            Batal
+          </a>
+          <button type="submit" class="btn text-white" style="background-color: #ff00aa;">
+            Simpan Perubahan
+          </button>
+        </div>
+      </form>
     </div>
-    <div class="mb-3">
-      <label>Prodi</label>
-      <input
-        type="text"
-        class="form-control"
-        name="prodi"
-        value="{{ dosen.prodi }}"
-        required
-      />
-    </div>
-    <button type="submit" class="btn btn-primary">Update</button>
-    <a href="{{ url_for('dosen.manage_dosen') }}" class="btn btn-secondary"
-      >Batal</a
-    >
-  </form>
+  </div>
 </div>
 {% endblock %}
