@@ -1,33 +1,47 @@
-<table class="table">
-  <thead>
-    <tr>
-      <th>Nama</th>
-      <th>NIP</th>
-      <th>Prodi</th>
-      <!-- Tambahkan ini -->
-      <th>Aksi</th>
-    </tr>
-  </thead>
-  <tbody>
-    {% for d in dosen %}
-    <tr>
-      <td>{{ d.nama }}</td>
-      <td>{{ d.nip }}</td>
-      <td>{{ d.prodi }}</td>
-      <!-- Tampilkan prodi -->
-      <td>
-        <a
-          href="{{ url_for('main.edit_dosen', dosen_id=d.id) }}"
-          class="btn btn-sm btn-warning"
-          >Edit</a
-        >
-        <a
-          href="{{ url_for('main.delete_dosen', dosen_id=d.id) }}"
-          class="btn btn-sm btn-danger"
-          >Hapus</a
-        >
-      </td>
-    </tr>
-    {% endfor %}
-  </tbody>
-</table>
+{% extends 'base.html' %} {% block content %}
+<div class="container mt-4">
+  <h2>Data Dosen</h2>
+  <a href="{{ url_for('dosen.add_dosen') }}" class="btn btn-primary mb-3"
+    >Tambah Dosen</a
+  >
+  <table class="table table-striped">
+    <thead>
+      <tr>
+        <th>Nama</th>
+        <th>NIP</th>
+        <th>Prodi</th>
+        <th>Aksi</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for d in dosen %}
+      <tr>
+        <td>{{ d.nama }}</td>
+        <td>{{ d.nip }}</td>
+        <td>{{ d.prodi }}</td>
+        <td>
+          <a
+            href="{{ url_for('dosen.edit_dosen', dosen_id=d.id) }}"
+            class="btn btn-warning btn-sm"
+            >Edit</a
+          >
+          <form
+            action="{{ url_for('dosen.delete_dosen', dosen_id=d.id) }}"
+            method="POST"
+            style="display: inline"
+          >
+            <button
+              type="submit"
+              class="btn btn-danger btn-sm"
+              onclick="return confirm('Yakin?')"
+            >
+              Hapus
+            </button>
+          </form>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

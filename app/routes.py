@@ -1,9 +1,173 @@
 from flask import Blueprint, render_template, request, redirect, url_for, flash
 from flask_login import login_required, current_user
-from .models import Mahasiswa, User, Role, db, Dosen, MataKuliah,Jadwal
+from .models import Mahasiswa, User, Role, db, Dosen, MataKuliah, Jadwal
 
 main = Blueprint('main', __name__)
+dosen_bp = Blueprint('dosen', __name__, url_prefix='/admin/dosen')
+admin_jadwal = Blueprint('admin_jadwal', __name__, url_prefix='/admin/jadwal')
 
+# --- ROUTE DOSEN ---
+@dosen_bp.route('/')
+@login_required
+def manage_dosen():
+    if current_user.role.name != 'admin':
+        return "Akses ditolak", 403
+    dosen = Dosen.query.all()
+    return render_template('dosen.html', dosen=dosen)
+
+@dosen_bp.route('/add', methods=['GET', 'POST'])
+@login_required
+def add_dosen():
+    if current_user.role.name != 'admin':
+        return "Akses ditolak", 403
+
+    if request.method == 'POST':
+        nama = request.form['nama']
+        nip = request.form['nip']
+        prodi = request.form['prodi']
+
+        existing = Dosen.query.filter_by(nip=nip).first()
+        if existing:
+            flash('NIP sudah terpakai!', 'danger')
+            return redirect(url_for('dosen.add_dosen'))
+
+        new_dosen = Dosen(nama=nama, nip=nip, prodi=prodi)
+        db.session.add(new_dosen)
+        db.session.commit()
+        flash('Dosen berhasil ditambahkan.', 'success')
+        return redirect(url_for('dosen.manage_dosen'))
+
+    return render_template('add_dosen.html')
+
+@dosen_bp.route('/edit/<int:dosen_id>', methods=['GET', 'POST'])
+@login_required
+def edit_dosen(dosen_id):
+    if current_user.role.name != 'admin':
+        return "Akses ditolak", 403
+
+    dosen = Dosen.query.get_or_404(dosen_id)
+
+    if request.method == 'POST':
+        nama = request.form['nama']
+        nip = request.form['nip']
+        prodi = request.form['prodi']
+
+        existing = Dosen.query.filter(Dosen.nip == nip, Dosen.id != dosen.id).first()
+        if existing:
+            flash('NIP sudah digunakan!', 'danger')
+            return redirect(url_for('dosen.edit_dosen', dosen_id=dosen.id))
+
+        dosen.nama = nama
+        dosen.nip = nip
+        dosen.prodi = prodi
+        db.session.commit()
+        flash('Dosen berhasil diupdate.', 'success')
+        return redirect(url_for('dosen.manage_dosen'))
+
+    return render_template('edit_dosen.html', dosen=dosen)
+
+@dosen_bp.route('/delete/<int:dosen_id>', methods=['POST'])
+@login_required
+def delete_dosen(dosen_id):
+    if current_user.role.name != 'admin':
+        return "Akses ditolak", 403
+
+    dosen = Dosen.query.get_or_404(dosen_id)
+    db.session.delete(dosen)
+    db.session.commit()
+    flash('Dosen berhasil dihapus.', 'success')
+    return redirect(url_for('dosen.manage_dosen'))
+
+# --- ROUTE JADWAL ---
+@admin_jadwal.route('/')
+@login_required
+def list_jadwal():
+    jadwals = Jadwal.query.all()
+    return render_template('jadwal_list.html', jadwals=jadwals)
+
+@admin_jadwal.route('/tambah', methods=['GET', 'POST'])
+@login_required
+def tambah_jadwal():
+    if request.method == 'POST':
+        mahasiswa_id = request.form['mahasiswa_id']
+        dosen_id = request.form['dosen_id']
+        mata_kuliah_id = request.form['mata_kuliah_id']
+        hari = request.form['hari']
+        jam_mulai = request.form['jam_mulai']
+        jam_selesai = request.form['jam_selesai']
+
+        if jam_selesai <= jam_mulai:
+            flash('Jam selesai harus lebih besar dari jam mulai!', 'error')
+            return redirect(url_for('admin_jadwal.tambah_jadwal'))
+
+        jadwal = Jadwal(
+            mahasiswa_id=mahasiswa_id,
+            dosen_id=dosen_id,
+            mata_kuliah_id=mata_kuliah_id,
+            hari=hari,
+            jam_mulai=jam_mulai,
+            jam_selesai=jam_selesai
+        )
+        db.session.add(jadwal)
+        db.session.commit()
+        flash('Jadwal berhasil ditambahkan!')
+        return redirect(url_for('admin_jadwal.list_jadwal'))
+
+    mahasiswas = Mahasiswa.query.all()
+    dosens = Dosen.query.all()
+    mata_kuliah = MataKuliah.query.all()
+    return render_template(
+        'jadwal_form.html',
+        jadwal=None,
+        mahasiswas=mahasiswas,
+        dosens=dosens,
+        mata_kuliah=mata_kuliah,
+        action='tambah'
+    )
+
+@admin_jadwal.route('/edit/<int:jadwal_id>', methods=['GET', 'POST'])
+@login_required
+def edit_jadwal(jadwal_id):
+    jadwal = Jadwal.query.get_or_404(jadwal_id)
+
+    if request.method == 'POST':
+        jadwal.mahasiswa_id = request.form['mahasiswa_id']
+        jadwal.dosen_id = request.form['dosen_id']
+        jadwal.mata_kuliah_id = request.form['mata_kuliah_id']
+        jadwal.hari = request.form['hari']
+        jadwal.jam_mulai = request.form['jam_mulai']
+        jadwal.jam_selesai = request.form['jam_selesai']
+
+        if jadwal.jam_selesai <= jadwal.jam_mulai:
+            flash('Jam selesai harus lebih besar dari jam mulai!', 'error')
+            return redirect(url_for('admin_jadwal.edit_jadwal', jadwal_id=jadwal.id))
+
+        db.session.commit()
+        flash('Jadwal berhasil diperbarui!')
+        return redirect(url_for('admin_jadwal.list_jadwal'))
+
+    mahasiswas = Mahasiswa.query.all()
+    dosens = Dosen.query.all()
+    mata_kuliah = MataKuliah.query.all()
+    return render_template(
+        'jadwal_form.html',
+        jadwal=jadwal,
+        mahasiswas=mahasiswas,
+        dosens=dosens,
+        mata_kuliah=mata_kuliah,
+        action='edit'
+    )
+
+@admin_jadwal.route('/hapus/<int:jadwal_id>', methods=['POST', 'GET'])
+@login_required
+def hapus_jadwal(jadwal_id):
+    jadwal = Jadwal.query.get_or_404(jadwal_id)
+    db.session.delete(jadwal)
+    db.session.commit()
+    flash('Jadwal berhasil dihapus.')
+    return redirect(url_for('admin_jadwal.list_jadwal'))
+
+# --- ROUTE MAIN (users, roles, mahasiswa, dll) tetap seperti sebelumnya ---
 @main.route('/dashboard')
 @login_required
 def dashboard():
@@ -264,181 +428,30 @@ def delete_mahasiswa(mhs_id):
     flash("Mahasiswa berhasil dihapus.")
     return redirect(url_for('main.manage_mahasiswa'))
 
-dosen_bp = Blueprint('dosen', __name__, url_prefix='/admin/dosen')
 
-@dosen_bp.route('/')
+@main.route('/mahasiswa/jadwal')
 @login_required
-def manage_dosen():
-    if current_user.role.name != 'admin':
+def jadwal_mahasiswa():
+    if current_user.role.name != 'mahasiswa':
         return "Akses ditolak!", 403
 
-    search_query = request.args.get('q', '')
-    if search_query:
-        dosen = Dosen.query.filter(
-            (Dosen.nama.ilike(f'%{search_query}%')) |
-            (Dosen.nip.ilike(f'%{search_query}%')) |
-            (Dosen.prodi.ilike(f'%{search_query}%'))
-        ).all()
-    else:
-        dosen = Dosen.query.all()
+    mhs = Mahasiswa.query.filter_by(user_id=current_user.id).first()
+    if not mhs:
+        return "Data mahasiswa tidak ditemukan!", 404
 
-    return render_template('dosen.html', dosen=dosen, search_query=search_query)
+    jadwals = Jadwal.query.filter_by(mahasiswa_id=mhs.id).all()
+    return render_template('jadwal_mahasiswa.html', jadwals=jadwals)
 
-@dosen_bp.route('/add', methods=['GET', 'POST'])
+@main.route('/dosen/jadwal')
 @login_required
-def add_dosen():
-    if current_user.role.name != 'admin':
+def jadwal_dosen():
+    if current_user.role.name != 'dosen':
         return "Akses ditolak!", 403
 
-    if request.method == 'POST':
-        nama = request.form['nama']
-        nip = request.form['nip']
-        prodi = request.form['prodi']
+    dosen = Dosen.query.filter_by(user_id=current_user.id).first()
+    if not dosen:
+        return "Data dosen tidak ditemukan!", 404
 
-        existing = Dosen.query.filter_by(nip=nip).first()
-        if existing:
-            flash('NIP sudah digunakan oleh dosen lain.', 'error')
-            return redirect(url_for('dosen.add_dosen'))
-
-        new_dosen = Dosen(nama=nama, nip=nip, prodi=prodi)
-        db.session.add(new_dosen)
-        db.session.commit()
-        flash("Dosen berhasil ditambahkan.")
-        return redirect(url_for('dosen.manage_dosen'))
-
-    return render_template('add_dosen.html')
-
-@dosen_bp.route('/edit/<int:dosen_id>', methods=['GET', 'POST'])
-@login_required
-def edit_dosen(dosen_id):
-    if current_user.role.name != 'admin':
-        return "Akses ditolak!", 403
-
-    dosen = Dosen.query.get_or_404(dosen_id)
-    if request.method == 'POST':
-        nama = request.form['nama']
-        nip = request.form['nip']
-        prodi = request.form['prodi']
-
-        existing = Dosen.query.filter_by(nip=nip).first()
-        if existing and existing.id != dosen.id:
-            flash('NIP sudah digunakan oleh dosen lain.', 'error')
-            return redirect(url_for('dosen.edit_dosen', dosen_id=dosen.id))
-
-        dosen.nama = nama
-        dosen.nip = nip
-        dosen.prodi = prodi
-        db.session.commit()
-        flash("Data dosen diperbarui.")
-        return redirect(url_for('dosen.manage_dosen'))
-
-    return render_template('edit_dosen.html', dosen=dosen)
-
-@dosen_bp.route('/delete/<int:dosen_id>', methods=['POST'])
-@login_required
-def delete_dosen(dosen_id):
-    if current_user.role.name != 'admin':
-        return "Akses ditolak!", 403
-
-    dosen = Dosen.query.get_or_404(dosen_id)
-    db.session.delete(dosen)
-    db.session.commit()
-    flash("Dosen berhasil dihapus.")
-    return redirect(url_for('dosen.manage_dosen'))
-
-
-admin_jadwal = Blueprint('admin_jadwal', __name__, url_prefix='/admin/jadwal')
-
-@admin_jadwal.route('/')
-@login_required
-def list_jadwal():
-    jadwals = Jadwal.query.all()
-    return render_template('jadwal_list.html', jadwals=jadwals)
-
-
-@admin_jadwal.route('/tambah', methods=['GET', 'POST'])
-@login_required
-def tambah_jadwal():
-    if request.method == 'POST':
-        mahasiswa_id = request.form['mahasiswa_id']
-        dosen_id = request.form['dosen_id']
-        mata_kuliah = request.form['mata_kuliah']
-        hari = request.form['hari']
-        jam_mulai = request.form['jam_mulai']
-        jam_selesai = request.form['jam_selesai']
-
-        # Validasi: jam_selesai harus lebih besar dari jam_mulai
-        if jam_selesai <= jam_mulai:
-            flash('Jam selesai harus lebih besar dari jam mulai!', 'error')
-            return redirect(url_for('admin_jadwal.tambah_jadwal'))
-
-        jadwal = Jadwal(
-            mahasiswa_id=mahasiswa_id,
-            dosen_id=dosen_id,
-            mata_kuliah=mata_kuliah,
-            hari=hari,
-            jam_mulai=jam_mulai,
-            jam_selesai=jam_selesai
-        )
-        db.session.add(jadwal)
-        db.session.commit()
-        flash('Jadwal berhasil ditambahkan!')
-        return redirect(url_for('admin_jadwal.list_jadwal'))
-
-    mahasiswas = Mahasiswa.query.all()
-    dosens = Dosen.query.all()
-    mata_kuliah = MataKuliah.query.all()
-    return render_template(
-        'jadwal_form.html',
-        jadwal=None,
-        mahasiswas=mahasiswas,
-        dosens=dosens,
-        mata_kuliah=mata_kuliah,
-        action='tambah'
-    )
-
-
-@admin_jadwal.route('/edit/<int:jadwal_id>', methods=['GET', 'POST'])
-@login_required
-def edit_jadwal(jadwal_id):
-    jadwal = Jadwal.query.get_or_404(jadwal_id)
-
-    if request.method == 'POST':
-        jadwal.mahasiswa_id = request.form['mahasiswa_id']
-        jadwal.dosen_id = request.form['dosen_id']
-        jadwal.mata_kuliah = request.form['mata_kuliah']
-        jadwal.hari = request.form['hari']
-        jadwal.jam_mulai = request.form['jam_mulai']
-        jadwal.jam_selesai = request.form['jam_selesai']
-
-        # Validasi: jam_selesai harus lebih besar dari jam_mulai
-        if jadwal.jam_selesai <= jadwal.jam_mulai:
-            flash('Jam selesai harus lebih besar dari jam mulai!', 'error')
-            return redirect(url_for('admin_jadwal.edit_jadwal', jadwal_id=jadwal.id))
-
-        db.session.commit()
-        flash('Jadwal berhasil diperbarui!')
-        return redirect(url_for('admin_jadwal.list_jadwal'))
-
-    mahasiswas = Mahasiswa.query.all()
-    dosens = Dosen.query.all()
-    mata_kuliah = MataKuliah.query.all()
-    return render_template(
-        'jadwal_form.html',
-        jadwal=jadwal,
-        mahasiswas=mahasiswas,
-        dosens=dosens,
-        mata_kuliah=mata_kuliah,
-        action='edit'
-    )
-
-
-@admin_jadwal.route('/hapus/<int:jadwal_id>', methods=['POST', 'GET'])
-@login_required
-def hapus_jadwal(jadwal_id):
-    jadwal = Jadwal.query.get_or_404(jadwal_id)
-    db.session.delete(jadwal)
-    db.session.commit()
-    flash('Jadwal berhasil dihapus.')
-    return redirect(url_for('admin_jadwal.list_jadwal'))
+    jadwals = Jadwal.query.filter_by(dosen_id=dosen.id).all()
+    return render_template('jadwal_dosen.html', jadwals=jadwals)
 
