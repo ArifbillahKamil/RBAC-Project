@@ -1,18 +1,17 @@
-{% extends 'base.html' %} {% block title %}Tambah Dosen{% endblock %} {% block
-content %}
+{% extends 'base.html' %} {% block content %}
 <div class="container mt-4">
   <h2>Tambah Dosen</h2>
   <form method="post">
     <div class="mb-3">
-      <label for="nama" class="form-label">Nama</label>
+      <label>Nama</label>
       <input type="text" class="form-control" name="nama" required />
     </div>
     <div class="mb-3">
-      <label for="nip" class="form-label">NIP</label>
+      <label>NIP</label>
       <input type="text" class="form-control" name="nip" required />
     </div>
     <div class="mb-3">
-      <label for="prodi" class="form-label">Prodi</label>
+      <label>Prodi</label>
       <input type="text" class="form-control" name="prodi" required />
     </div>
     <button type="submit" class="btn btn-primary">Simpan</button>

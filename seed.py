@@ -4,8 +4,8 @@ from werkzeug.security import generate_password_hash
 
 app = create_app()
 
-with app.app_context():  # <--- wajib untuk akses db
-    db.create_all()
+with app.app_context():
+    # db.create_all()  # HAPUS atau KOMENTARI baris ini
 
     # Seed Role
     if not Role.query.filter_by(name='admin').first():

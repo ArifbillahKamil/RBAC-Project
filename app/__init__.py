@@ -21,7 +21,7 @@ def create_app():
     login_manager.init_app(app)
     login_manager.login_view = 'auth.login'
 
-    from app.models import User
+    from app.models import User, Role, Mahasiswa, Dosen, MataKuliah, Jadwal
 
     @login_manager.user_loader
     def load_user(user_id):
@@ -35,5 +35,8 @@ def create_app():
 
     from .routes import dosen_bp
     app.register_blueprint(dosen_bp)
+
+    from .routes import admin_jadwal
+    app.register_blueprint(admin_jadwal)
 
     return app

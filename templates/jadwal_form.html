@@ -18,11 +18,15 @@
         {% endfor %}
     </select><br>
 
-    <label>Mata Kuliah</label>
-    <select name="mata_kuliah" required>
-        {% for mk in mata_kuliah %}
-            <option value="{{ mk.nama }}" {% if jadwal and mk.nama == jadwal.mata_kuliah %}selected{% endif %}>{{ mk.nama }}</option>
-        {% endfor %}
+    <label for="mata_kuliah_id">Mata Kuliah</label>
+    <select class="form-control" name="mata_kuliah_id" id="mata_kuliah_id" required>
+      <option value="">-- Pilih Mata Kuliah --</option>
+      {% for mk in mata_kuliah %}
+        <option value="{{ mk.id }}"
+          {% if jadwal and jadwal.mata_kuliah_id == mk.id %}selected{% endif %}>
+          {{ mk.kode }} - {{ mk.nama }}
+        </option>
+      {% endfor %}
     </select><br>
 
     <label>Hari</label>

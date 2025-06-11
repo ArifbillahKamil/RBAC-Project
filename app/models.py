@@ -42,9 +42,20 @@ class Jadwal(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     mahasiswa_id = db.Column(db.Integer, db.ForeignKey('mahasiswa.id'), nullable=False)
     dosen_id = db.Column(db.Integer, db.ForeignKey('dosen.id'), nullable=False)
-    mata_kuliah = db.Column(db.String(100), nullable=False)
     hari = db.Column(db.String(20), nullable=False)
     jam_mulai = db.Column(db.Time, nullable=False)
     jam_selesai = db.Column(db.Time, nullable=False)
+
     mahasiswa = db.relationship('Mahasiswa', backref='jadwal')
     dosen = db.relationship('Dosen', backref='jadwal')
+    mata_kuliah = db.relationship('MataKuliah', secondary='mata_kuliah_jadwal', backref='jadwal')
+
+class MataKuliahJadwal(db.Model):
+    __tablename__ = 'mata_kuliah_jadwal'
+
+    id = db.Column(db.Integer, primary_key=True)
+    jadwal_id = db.Column(db.Integer, db.ForeignKey('jadwal.id'), nullable=False)
+    mata_kuliah_id = db.Column(db.Integer, db.ForeignKey('mata_kuliah.id'), nullable=False)
+
+    jadwal = db.relationship('Jadwal', backref='mata_kuliah_jadwal')
+    mata_kuliah = db.relationship('MataKuliah', backref='mata_kuliah_jadwal')
