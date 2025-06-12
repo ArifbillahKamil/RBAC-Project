@@ -45,11 +45,22 @@
     </style>
   </head>
   <body class="bg-light">
+    {% extends "base.html" %} {% block title %}Manajemen User{% endblock %} {%
+    block content %}
     <div class="container py-5">
       <h1 class="mb-4">Daftar User</h1>
-      <a href="{{ url_for('main.dashboard') }}" class="btn btn-main mb-3"
-        >Kembali ke Dashboard</a
-      >
+      <form method="get" class="mb-3">
+        <div class="input-group">
+          <input
+            type="text"
+            name="q"
+            class="form-control"
+            placeholder="Cari user (email/role)"
+            value="{{ search_query or '' }}"
+          />
+          <button class="btn btn-primary" type="submit">Cari</button>
+        </div>
+      </form>
       <div class="table-container">
         <table class="table table-bordered text-center align-middle">
           <thead>
@@ -61,11 +72,11 @@
             </tr>
           </thead>
           <tbody>
-            {% for user in users %}
+            {% for user in users.items %}
             <tr>
               <td>{{ user.id }}</td>
               <td>{{ user.email }}</td>
-              <td>{{ user.role.name }}</td>
+              <td>{{ user.role.name if user.role else '-' }}</td>
               <td>
                 <a
                   href="{{ url_for('main.edit_user_form', user_id=user.id) }}"
@@ -80,10 +91,53 @@
                 >
               </td>
             </tr>
+            {% else %}
+            <tr>
+              <td colspan="4" class="text-center text-muted">
+                Tidak ada user.
+              </td>
+            </tr>
             {% endfor %}
           </tbody>
         </table>
       </div>
+      <!-- Pagination -->
+      <nav>
+        <ul class="pagination">
+          {% if users.has_prev %}
+          <li class="page-item">
+            <a
+              class="page-link"
+              href="?q={{ search_query }}&page={{ users.prev_num }}"
+              >Previous</a
+            >
+          </li>
+          {% else %}
+          <li class="page-item disabled">
+            <span class="page-link">Previous</span>
+          </li>
+          {% endif %}
+          <li class="page-item disabled">
+            <span class="page-link"
+              >Halaman {{ users.page }} dari {{ users.pages }}</span
+            >
+          </li>
+          {% if users.has_next %}
+          <li class="page-item">
+            <a
+              class="page-link"
+              href="?q={{ search_query }}&page={{ users.next_num }}"
+              >Next</a
+            >
+          </li>
+          {% else %}
+          <li class="page-item disabled">
+            <span class="page-link">Next</span>
+          </li>
+          {% endif %}
+        </ul>
+      </nav>
     </div>
+    {% endblock %}
   </body>
 </html>
