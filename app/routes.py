@@ -364,20 +364,24 @@ def manage_mahasiswa():
         return "Akses ditolak!", 403
 
     search_query = request.args.get('q', '')
+    # Ambil per_page dari query string, default 10
+    try:
+        per_page = int(request.args.get('per_page', 10))
+    except ValueError:
+        per_page = 10
+
     page = request.args.get('page', 1, type=int)
-    per_page = 10  # jumlah data per halaman
-
+    # Query mahasiswa sesuai search_query...
+    mahasiswa_query = Mahasiswa.query
     if search_query:
-        mahasiswa = Mahasiswa.query.filter(
-            (Mahasiswa.nama.ilike(f'%{search_query}%')) |
-            (Mahasiswa.nim.ilike(f'%{search_query}%')) |
-            (Mahasiswa.jurusan.ilike(f'%{search_query}%'))
-        ).paginate(page=page, per_page=per_page)
-    else:
-        mahasiswa = Mahasiswa.query.paginate(page=page, per_page=per_page)
-
-    return render_template('manage_mahasiswa.html', mahasiswa=mahasiswa, search_query=search_query)
-
+        mahasiswa_query = mahasiswa_query.filter(Mahasiswa.nama.ilike(f"%{search_query}%"))
+    mahasiswa = mahasiswa_query.paginate(page=page, per_page=per_page)
+    return render_template(
+        'manage_mahasiswa.html',
+        mahasiswa=mahasiswa,
+        search_query=search_query,
+        per_page=per_page
+    )
 
 
 @main.route('/admin/mahasiswa/add', methods=['GET', 'POST'])
