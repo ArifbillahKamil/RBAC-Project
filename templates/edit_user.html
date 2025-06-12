@@ -1,95 +1,121 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Edit User</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <style>
-        /* Warna tema utama */
-        :root {
-            --primary-color: #ff00aa;
-        }
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Edit User</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"/>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+  <style>
+    body {
+      background-color: #f5f6fa;
+      font-family: 'Segoe UI', sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
 
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f8f9fa;
-        }
+    .edit-card {
+      background-color: white;
+      border-radius: 16px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+      width: 100%;
+      max-width: 420px;
+      overflow: hidden;
+    }
 
-        .container {
-            margin-top: 50px;
-        }
+    .edit-card-header {
+      background: linear-gradient(135deg, #ff00aa, #ff1493);
+      color: white;
+      text-align: center;
+      padding: 1.2rem;
+      font-weight: bold;
+      font-size: 1.4rem;
+    }
 
-        h2 {
-            color: var(--primary-color);
-            text-align: center;
-            margin-bottom: 30px;
-        }
+    .edit-card-header i {
+      margin-right: 8px;
+    }
 
-        label {
-            font-weight: bold;
-            margin-bottom: 0.5rem;
-            display: block;
-        }
+    .edit-card-body {
+      padding: 2rem;
+    }
 
-        input[type="email"],
-        select {
-            width: 100%;
-            padding: 0.5rem;
-            margin-bottom: 1rem;
-            border: 1px solid #ced4da;
-            border-radius: 0.25rem;
-        }
+    .form-label {
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+    }
 
-        button[type="submit"] {
-            background-color: var(--primary-color);
-            color: white;
-            padding: 0.75rem 1.5rem;
-            border: none;
-            border-radius: 0.25rem;
-            cursor: pointer;
-            transition: background-color 0.3s ease;
-        }
+    .form-control,
+    .form-select {
+      border-radius: 10px;
+      padding: 0.6rem 0.75rem;
+      margin-bottom: 1rem;
+    }
 
-        button[type="submit"]:hover {
-            background-color: #cc0088;
-        }
+    .btn-custom {
+      border: none;
+      border-radius: 10px;
+      font-weight: 600;
+      padding: 0.6rem 1rem;
+      transition: 0.3s ease;
+    }
 
-        a {
-            color: var(--primary-color);
-            text-decoration: none;
-        }
+    .btn-save {
+      background-color: #ff00aa;
+      color: white;
+    }
 
-        a:hover {
-            text-decoration: underline;
-        }
-    </style>
+    .btn-save:hover {
+      background-color: #cc0088;
+    }
+
+    .btn-back {
+      background-color: #f1f1f1;
+      color: #333;
+    }
+
+    .btn-back:hover {
+      background-color: #e0e0e0;
+    }
+  </style>
 </head>
 <body>
-    <div class="container">
-        <h2>Edit User</h2>
-        <form method="POST">
-            <div class="mb-3">
-                <label for="email" class="form-label">Email:</label>
-                <input type="email" class="form-control" id="email" name="email" value="{{ user.email }}" required>
-            </div>
-
-            <div class="mb-3">
-                <label for="role_id" class="form-label">Role:</label>
-                <select class="form-select" id="role_id" name="role_id" required>
-                    {% for role in roles %}
-                        <option value="{{ role.id }}" {% if role.id == user.role_id %}selected{% endif %}>
-                            {{ role.name }}
-                        </option>
-                    {% endfor %}
-                </select>
-            </div>
-
-            <button type="submit" class="btn btn-primary">Simpan Perubahan</button>
-        </form>
-        <a href="{{ url_for('main.manage_users') }}">Kembali ke daftar user</a>
+  <div class="edit-card">
+    <div class="edit-card-header">
+      <i class="bi bi-person-fill-gear"></i> Edit User
     </div>
+    <div class="edit-card-body">
+      <form method="POST">
+        <div class="mb-3">
+          <label for="email" class="form-label">Email</label>
+          <input type="email" id="email" name="email" class="form-control" value="{{ user.email }}" required>
+        </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+        <div class="mb-3">
+          <label for="role_id" class="form-label">Role</label>
+          <select id="role_id" name="role_id" class="form-select" required>
+            {% for role in roles %}
+              <option value="{{ role.id }}" {% if role.id == user.role_id %}selected{% endif %}>
+                {{ role.name }}
+              </option>
+            {% endfor %}
+          </select>
+        </div>
+
+        <div class="d-flex justify-content-between">
+          <a href="{{ url_for('main.manage_users') }}" class="btn btn-back btn-custom">
+            ← Kembali
+          </a>
+          <button type="submit" class="btn btn-save btn-custom">
+            <i class="bi bi-check-circle"></i> Simpan
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
