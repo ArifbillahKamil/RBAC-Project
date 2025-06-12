@@ -1,47 +1,54 @@
-{% extends "base.html" %} {% block title %}Dashboard Dosen{% endblock %} {%
-block content %}
-<div class="flex flex-col items-center justify-center min-h-[70vh]">
-  <div
-    class="bg-white shadow-2xl rounded-2xl p-10 max-w-md w-full text-center mb-8"
-  >
-    <h1 class="text-3xl font-bold text-[--primary-color] mb-4">
-      Selamat datang, {{ user.email }}
+{% extends "base.html" %}
+
+{% block title %}Dashboard Dosen{% endblock %}
+
+{% block content %}
+<div class="flex flex-col items-center justify-center min-h-[70vh] px-4 animate__animated animate__fadeIn">
+  <!-- Welcome Card -->
+  <div class="bg-white shadow-2xl rounded-3xl p-10 w-full max-w-md text-center mb-8 border border-gray-100">
+    <h1 class="text-3xl font-bold text-[--primary-color] mb-2">
+      Selamat datang 👋
     </h1>
-    <p class="text-lg text-gray-700 mb-6">
-      Anda login sebagai <span class="font-semibold">Dosen</span>
+    <p class="text-lg text-gray-700 mb-1">
+      Anda login sebagai <span class="font-semibold text-[--primary-color]">Dosen</span>
     </p>
+    <p class="text-sm text-gray-500 mb-6">{{ user.email }}</p>
     <a
       href="{{ url_for('auth.logout') }}"
-      class="inline-block bg-[--primary-color] hover:bg-pink-700 transition text-white font-semibold py-2 px-6 rounded-full"
+      class="inline-block bg-[--primary-color] hover:bg-pink-700 transition text-white font-semibold py-2 px-6 rounded-full shadow"
     >
-      Logout
+      <i class="bi bi-box-arrow-right me-1"></i> Logout
     </a>
   </div>
-  <div class="w-full max-w-2xl">
-    <h2 class="text-xl font-bold mb-4 text-center">Jadwal Mengajar Anda</h2>
-    <div class="overflow-x-auto">
-      <table class="table-auto w-full bg-white rounded-xl shadow">
-        <thead>
-          <tr class="bg-pink-100">
-            <th class="px-4 py-2">Mata Kuliah</th>
-            <th class="px-4 py-2">Hari</th>
-            <th class="px-4 py-2">Jam</th>
-            <th class="px-4 py-2">Ruang</th>
+
+  <!-- Teaching Schedule -->
+  <div class="w-full max-w-3xl">
+    <h2 class="text-2xl font-bold mb-4 text-center text-gray-800">
+      Jadwal Mengajar Anda 📅
+    </h2>
+    <div class="overflow-x-auto rounded-xl shadow-lg">
+      <table class="table-auto w-full text-sm text-left text-gray-700 bg-white">
+        <thead class="bg-pink-100 text-[--primary-color] text-base">
+          <tr>
+            <th class="px-4 py-3">Mata Kuliah</th>
+            <th class="px-4 py-3">Hari</th>
+            <th class="px-4 py-3">Jam</th>
+            <th class="px-4 py-3">Ruang</th>
           </tr>
         </thead>
         <tbody>
           {% for jadwal in jadwals %}
-          <tr>
-            <td class="border px-4 py-2">{{ jadwal.mata_kuliah.nama }}</td>
-            <td class="border px-4 py-2">{{ jadwal.hari }}</td>
-            <td class="border px-4 py-2">
+          <tr class="border-b hover:bg-pink-50 transition">
+            <td class="px-4 py-3">{{ jadwal.mata_kuliah.nama }}</td>
+            <td class="px-4 py-3">{{ jadwal.hari }}</td>
+            <td class="px-4 py-3">
               {{ jadwal.jam_mulai }} - {{ jadwal.jam_selesai }}
             </td>
-            <td class="border px-4 py-2">{{ jadwal.ruang or '-' }}</td>
+            <td class="px-4 py-3">{{ jadwal.ruang or '-' }}</td>
           </tr>
           {% else %}
           <tr>
-            <td colspan="4" class="text-center text-gray-400 py-4">
+            <td colspan="4" class="text-center text-gray-400 py-6">
               Tidak ada jadwal mengajar.
             </td>
           </tr>
