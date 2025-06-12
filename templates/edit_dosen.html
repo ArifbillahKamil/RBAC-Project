@@ -1,52 +1,67 @@
 {% extends 'base.html' %}
 
+{% block title %}Edit Dosen{% endblock %}
+
 {% block content %}
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet" />
+
 <div class="container mt-5">
-  <div class="card shadow rounded-4 border-0">
-    <div class="card-header text-white text-center" style="background-color: #ff00aa;">
-      <h3 class="mb-0">Edit Dosen</h3>
+  <div class="card shadow-lg border-0 rounded-4 animate__animated animate__fadeIn">
+    <div class="card-header text-white text-center py-3" style="background-color: #ff00aa;">
+      <h3 class="mb-0"><i class="bi bi-pencil-fill me-2"></i>Edit Data Dosen</h3>
     </div>
+
     <div class="card-body">
       <form method="post">
         <div class="mb-3">
-          <label for="nama" class="form-label">Nama</label>
+          <label for="nama" class="form-label fw-semibold">Nama</label>
           <input
             type="text"
             id="nama"
             name="nama"
-            class="form-control"
+            class="form-control rounded-3"
             value="{{ dosen.nama }}"
             required
           />
         </div>
+
         <div class="mb-3">
-          <label for="nip" class="form-label">NIP</label>
+          <label for="nip" class="form-label fw-semibold">NIP</label>
           <input
             type="text"
             id="nip"
             name="nip"
-            class="form-control"
+            class="form-control rounded-3"
             value="{{ dosen.nip }}"
             required
           />
         </div>
+
         <div class="mb-4">
-          <label for="prodi" class="form-label">Prodi</label>
+          <label for="prodi" class="form-label fw-semibold">Prodi</label>
           <input
             type="text"
             id="prodi"
             name="prodi"
-            class="form-control"
+            class="form-control rounded-3"
             value="{{ dosen.prodi }}"
             required
           />
         </div>
+
         <div class="d-flex justify-content-between">
-          <a href="{{ url_for('dosen.manage_dosen') }}" class="btn btn-outline-secondary">
-            Batal
+          <a
+            href="{{ url_for('dosen.manage_dosen') }}"
+            class="btn btn-outline-secondary rounded-pill px-4"
+          >
+            <i class="bi bi-arrow-left-circle me-1"></i> Batal
           </a>
-          <button type="submit" class="btn text-white" style="background-color: #ff00aa;">
-            Simpan Perubahan
+          <button
+            type="submit"
+            class="btn text-white rounded-pill px-4"
+            style="background-color: #ff00aa;"
+          >
+            <i class="bi bi-check2-circle me-1"></i> Simpan Perubahan
           </button>
         </div>
       </form>
