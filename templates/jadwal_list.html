@@ -1,51 +1,65 @@
 {% extends 'base.html' %}
 
+{% block title %}Manajemen Jadwal{% endblock %}
+
 {% block content %}
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" />
+
 <div class="container mt-5">
-  <div class="d-flex justify-content-between align-items-center mb-3">
-    <h3 class="fw-bold text-uppercase">Manajemen Jadwal</h3>
-    <a href="{{ url_for('admin_jadwal.tambah_jadwal') }}" class="btn text-white" style="background-color: #ff00aa;">
-      + Tambah Jadwal
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h3 class="fw-bold text-uppercase text-dark">
+      <i class="bi bi-calendar2-week-fill me-2 text-primary"></i> Manajemen Jadwal
+    </h3>
+    <a href="{{ url_for('admin_jadwal.tambah_jadwal') }}" class="btn text-white px-4 py-2 rounded-pill" style="background-color: #ff00aa;">
+      <i class="bi bi-plus-circle me-2"></i> Tambah Jadwal
     </a>
   </div>
 
   <div class="card shadow border-0 rounded-4">
     <div class="card-body p-0">
       <div class="table-responsive">
-        <table class="table table-hover align-middle mb-0">
+        <table class="table table-striped table-bordered mb-0 text-center align-middle">
           <thead class="text-white" style="background-color: #ff00aa;">
             <tr>
-              <th>No</th>
-              <th>Mahasiswa</th>
-              <th>Dosen</th>
-              <th>Mata Kuliah</th>
-              <th>Hari</th>
-              <th>Jam Mulai</th>
-              <th>Jam Selesai</th>
-              <th>Aksi</th>
+              <th scope="col" style="width: 50px;">No</th>
+              <th scope="col">Mahasiswa</th>
+              <th scope="col">Dosen</th>
+              <th scope="col">Mata Kuliah</th>
+              <th scope="col" style="width: 100px;">Hari</th>
+              <th scope="col" style="width: 120px;">Jam Mulai</th>
+              <th scope="col" style="width: 120px;">Jam Selesai</th>
+              <th scope="col" style="width: 160px;">Aksi</th>
             </tr>
           </thead>
           <tbody>
             {% for j in jadwals %}
             <tr>
               <td>{{ loop.index }}</td>
-              <td>{{ j.mahasiswa.nama }}</td>
-              <td>{{ j.dosen.nama }}</td>
-              <td>{{ j.mata_kuliah.nama }}</td>
+              <td class="text-start">{{ j.mahasiswa.nama }}</td>
+              <td class="text-start">{{ j.dosen.nama }}</td>
+              <td class="text-start">{{ j.mata_kuliah.nama }}</td>
               <td>{{ j.hari }}</td>
               <td>{{ j.jam_mulai }}</td>
               <td>{{ j.jam_selesai }}</td>
               <td>
-                <a href="{{ url_for('admin_jadwal.edit_jadwal', jadwal_id=j.id) }}"
-                   class="btn btn-sm btn-warning">Edit</a>
-                <a href="{{ url_for('admin_jadwal.hapus_jadwal', jadwal_id=j.id) }}"
-                   class="btn btn-sm btn-danger"
-                   onclick="return confirm('Yakin ingin menghapus jadwal ini?')">Hapus</a>
+                <div class="d-flex justify-content-center gap-2">
+                  <a href="{{ url_for('admin_jadwal.edit_jadwal', jadwal_id=j.id) }}"
+                    class="btn btn-sm btn-warning rounded-pill px-3">
+                    <i class="bi bi-pencil-fill"></i>
+                  </a>
+                  <a href="{{ url_for('admin_jadwal.hapus_jadwal', jadwal_id=j.id) }}"
+                    class="btn btn-sm btn-danger rounded-pill px-3"
+                    onclick="return confirm('Yakin ingin menghapus jadwal ini?')">
+                    <i class="bi bi-trash-fill"></i>
+                  </a>
+                </div>
               </td>
             </tr>
             {% else %}
             <tr>
-              <td colspan="8" class="text-center text-muted">Belum ada data jadwal.</td>
+              <td colspan="8" class="py-4 text-muted">
+                <i class="bi bi-info-circle me-2"></i> Belum ada data jadwal.
+              </td>
             </tr>
             {% endfor %}
           </tbody>
