@@ -187,7 +187,13 @@ def dashboard():
     if current_user.role.name == 'admin':
         return render_template('dashboard.html', user=current_user)
     elif current_user.role.name == 'user':
-        return "Kamu user biasa, akses dibatasi!"
+        return "Kamu user biasa, tidak ada dashboard khusus.", 403
+    elif current_user.role.name == 'mahasiswa':
+        return render_template('dashboard_mahasiswa.html', user=current_user)
+    elif current_user.role.name == 'dosen':
+        dosen = Dosen.query.filter_by(user_id=current_user.id).first()
+        jadwals = Jadwal.query.filter_by(dosen_id=dosen.id).all() if dosen else []
+        return render_template('dashboard_dosen.html', user=current_user, jadwals=jadwals)
     else:
         return "Role tidak dikenali!"
 

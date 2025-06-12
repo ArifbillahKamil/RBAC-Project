@@ -22,9 +22,10 @@ class Mahasiswa(db.Model):
 
 class Dosen(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    nama = db.Column(db.String(100), nullable=False)
-    nip = db.Column(db.String(30), nullable=False, unique=True)
-    prodi = db.Column(db.String(100), nullable=False)
+    nama = db.Column(db.String(100))
+    nip = db.Column(db.String(50), unique=True)
+    prodi = db.Column(db.String(100))
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))  # <--- ini WAJIB ADA
 
 class MataKuliah(db.Model):
     id = db.Column(db.Integer, primary_key=True)
