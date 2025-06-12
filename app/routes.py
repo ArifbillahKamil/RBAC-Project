@@ -1,6 +1,7 @@
-from flask import Blueprint, render_template, request, redirect, url_for, flash
+from flask import Blueprint, render_template, request, redirect, url_for, flash, jsonify
 from flask_login import login_required, current_user
 from .models import Mahasiswa, User, Role, db, Dosen, MataKuliah, Jadwal
+from werkzeug.security import generate_password_hash
 
 main = Blueprint('main', __name__)
 dosen_bp = Blueprint('dosen', __name__, url_prefix='/admin/dosen')
@@ -12,8 +13,16 @@ admin_jadwal = Blueprint('admin_jadwal', __name__, url_prefix='/admin/jadwal')
 def manage_dosen():
     if current_user.role.name != 'admin':
         return "Akses ditolak", 403
-    dosen = Dosen.query.all()
-    return render_template('dosen.html', dosen=dosen)
+    search_query = request.args.get('q', '')
+    if search_query:
+        dosen = Dosen.query.filter(
+            (Dosen.nama.ilike(f'%{search_query}%')) |
+            (Dosen.nip.ilike(f'%{search_query}%')) |
+            (Dosen.prodi.ilike(f'%{search_query}%'))
+        ).all()
+    else:
+        dosen = Dosen.query.all()
+    return render_template('dosen.html', dosen=dosen, search_query=search_query)
 
 @dosen_bp.route('/add', methods=['GET', 'POST'])
 @login_required
@@ -73,6 +82,10 @@ def delete_dosen(dosen_id):
         return "Akses ditolak", 403
 
     dosen = Dosen.query.get_or_404(dosen_id)
+    if dosen.jadwal:
+        flash("Tidak bisa menghapus dosen yang masih memiliki jadwal!", "danger")
+        return redirect(url_for('dosen.manage_dosen'))
+
     db.session.delete(dosen)
     db.session.commit()
     flash('Dosen berhasil dihapus.', 'success')
@@ -182,11 +195,17 @@ def dashboard():
 @login_required
 def manage_users():
     if current_user.role.name != 'admin':
-        return "Akses ditolak. Hanya admin yang bisa mengakses halaman ini.", 403
-
-    from .models import User
-    users = User.query.all()
-    return render_template('manage_users.html', users=users)
+        return "Akses ditolak", 403
+    search_query = request.args.get('q', '')
+    page = request.args.get('page', 1, type=int)
+    per_page = 10
+    if search_query:
+        users = User.query.filter(
+            (User.email.ilike(f'%{search_query}%'))
+        ).paginate(page=page, per_page=per_page)
+    else:
+        users = User.query.paginate(page=page, per_page=per_page)
+    return render_template('manage_users.html', users=users, search_query=search_query)
 
 
 # Tambah user - form
@@ -209,14 +228,8 @@ def add_user():
 
     email = request.form.get('email')
     password = request.form.get('password')
-    role_id = int(request.form.get('role_id'))
-
-    if not email or not password or not role_id:
-        flash("Semua field harus diisi")
-        return redirect(url_for('main.add_user_form'))
-
-    from werkzeug.security import generate_password_hash
-    hashed_password = generate_password_hash(password, method='pbkdf2:sha256')
+    role_id = request.form.get('role_id')
+    hashed_password = generate_password_hash(password)
 
     from .models import User, db
     new_user = User(email=email, password=hashed_password, role_id=role_id)
@@ -344,18 +357,18 @@ def manage_mahasiswa():
     if current_user.role.name != 'admin':
         return "Akses ditolak!", 403
 
-    # Ambil query dari parameter GET
     search_query = request.args.get('q', '')
+    page = request.args.get('page', 1, type=int)
+    per_page = 10  # jumlah data per halaman
 
     if search_query:
-        # Filter berdasarkan nama, nim, atau jurusan (case insensitive)
         mahasiswa = Mahasiswa.query.filter(
             (Mahasiswa.nama.ilike(f'%{search_query}%')) |
             (Mahasiswa.nim.ilike(f'%{search_query}%')) |
             (Mahasiswa.jurusan.ilike(f'%{search_query}%'))
-        ).all()
+        ).paginate(page=page, per_page=per_page)
     else:
-        mahasiswa = Mahasiswa.query.all()
+        mahasiswa = Mahasiswa.query.paginate(page=page, per_page=per_page)
 
     return render_template('manage_mahasiswa.html', mahasiswa=mahasiswa, search_query=search_query)
 
@@ -454,4 +467,85 @@ def jadwal_dosen():
 
     jadwals = Jadwal.query.filter_by(dosen_id=dosen.id).all()
     return render_template('jadwal_dosen.html', jadwals=jadwals)
+
+@main.route('/admin/matakuliah')
+@login_required
+def manage_matakuliah():
+    if current_user.role.name != 'admin':
+        return "Akses ditolak", 403
+    search_query = request.args.get('q', '')
+    page = request.args.get('page', 1, type=int)
+    per_page = 10
+    if search_query:
+        matakuliah = MataKuliah.query.filter(
+            (MataKuliah.nama.ilike(f'%{search_query}%')) |
+            (MataKuliah.kode.ilike(f'%{search_query}%'))
+        ).paginate(page=page, per_page=per_page)
+    else:
+        matakuliah = MataKuliah.query.paginate(page=page, per_page=per_page)
+    return render_template('manage_matkul.html', matakuliah=matakuliah, search_query=search_query)
+
+@main.route('/admin/matakuliah/add', methods=['GET', 'POST'])
+@login_required
+def add_matakuliah():
+    if current_user.role.name != 'admin':
+        return "Akses ditolak!", 403
+    if request.method == 'POST':
+        kode = request.form['kode']
+        nama = request.form['nama']
+        sks = request.form['sks']
+        if MataKuliah.query.filter_by(kode=kode).first():
+            flash('Kode sudah digunakan.', 'danger')
+            return redirect(url_for('main.add_matakuliah'))
+        mk = MataKuliah(kode=kode, nama=nama, sks=sks)
+        db.session.add(mk)
+        db.session.commit()
+        flash('Mata kuliah berhasil ditambahkan.', 'success')
+        return redirect(url_for('main.manage_matakuliah'))
+    return render_template('add_matkul.html')
+
+@main.route('/admin/matakuliah/edit/<int:mk_id>', methods=['GET', 'POST'])
+@login_required
+def edit_matakuliah(mk_id):
+    if current_user.role.name != 'admin':
+        return "Akses ditolak!", 403
+    mk = MataKuliah.query.get_or_404(mk_id)
+    if request.method == 'POST':
+        mk.nama = request.form['nama']
+        mk.nama_mk = request.form['nama']
+        mk.kode = request.form['kode']
+        mk.kode_mk = request.form['kode']
+        # Tambahkan baris berikut:
+        mk.sks = request.form['sks']
+        db.session.commit()
+        flash('Mata kuliah berhasil diupdate.', 'success')
+        return redirect(url_for('main.manage_matakuliah'))
+    return render_template('edit_matkul.html', mk=mk)
+
+@main.route('/admin/matakuliah/delete/<int:mk_id>', methods=['POST', 'GET'])
+@login_required
+def delete_matakuliah(mk_id):
+    if current_user.role.name != 'admin':
+        return "Akses ditolak!", 403
+    mk = MataKuliah.query.get_or_404(mk_id)
+    db.session.delete(mk)
+    db.session.commit()
+    flash('Mata kuliah berhasil dihapus.', 'success')
+    return redirect(url_for('main.manage_matakuliah'))
+
+@main.route('/api/mahasiswa/search')
+@login_required
+def search_mahasiswa():
+    q = request.args.get('q', '')
+    results = Mahasiswa.query
+    if q:
+        results = results.filter(Mahasiswa.nama.ilike(f'%{q}%'))
+    results = results.limit(20).all()
+    return jsonify([
+        {'id': m.id, 'text': f"{m.nama} ({m.nim})"} for m in results
+    ])
+
+@main.route('/')
+def index():
+    return redirect(url_for('main.dashboard'))
 

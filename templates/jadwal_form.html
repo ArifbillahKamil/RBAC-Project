@@ -10,12 +10,12 @@
       <form method="POST">
         <div class="mb-3">
           <label class="form-label">Mahasiswa</label>
-          <select name="mahasiswa_id" class="form-select" required>
-            {% for m in mahasiswas %}
-              <option value="{{ m.id }}" {% if jadwal and m.id == jadwal.mahasiswa_id %}selected{% endif %}>
-                {{ m.nama }}
+          <select id="mahasiswa_id" name="mahasiswa_id" class="form-select" style="width:100%" required>
+            {% if jadwal and jadwal.mahasiswa_id %}
+              <option value="{{ jadwal.mahasiswa_id }}" selected>
+                {{ jadwal.mahasiswa.nama }}
               </option>
-            {% endfor %}
+            {% endif %}
           </select>
         </div>
 
@@ -69,4 +69,30 @@
     </div>
   </div>
 </div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+<script>
+$(document).ready(function() {
+  $('#mahasiswa_id').select2({
+    ajax: {
+      url: "{{ url_for('main.search_mahasiswa') }}",
+      dataType: 'json',
+      delay: 250,
+      data: function (params) {
+        return { q: params.term };
+      },
+      processResults: function (data) {
+        return {
+          results: data
+        };
+      },
+      cache: true
+    },
+    minimumInputLength: 2,
+    placeholder: 'Cari Mahasiswa'
+  });
+});
+</script>
 {% endblock %}
