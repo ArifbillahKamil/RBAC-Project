@@ -1,26 +1,71 @@
+{% extends 'base.html' %}
+
+{% block title %}Tambah Dosen{% endblock %}
+
+{% block content %}
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet" />
+
 <div class="container mt-5">
-  <div class="card shadow-lg rounded-4">
-    <div class="card-header text-white" style="background-color: #ff00aa;">
-      <h4 class="mb-0">Tambah Dosen</h4>
+  <div class="card shadow-lg border-0 rounded-4 animate__animated animate__fadeIn">
+    <div class="card-header text-white text-center py-3" style="background-color: #ff00aa;">
+      <h4 class="mb-0"><i class="bi bi-person-plus-fill me-2"></i>Tambah Dosen</h4>
     </div>
+
     <div class="card-body p-4">
       <form method="post">
         <div class="mb-3">
-          <label for="nama" class="form-label">Nama</label>
-          <input type="text" class="form-control rounded-3" name="nama" required />
+          <label for="nama" class="form-label fw-semibold">Nama</label>
+          <input
+            type="text"
+            class="form-control rounded-3"
+            name="nama"
+            id="nama"
+            placeholder="Nama lengkap"
+            required
+          />
         </div>
+
         <div class="mb-3">
-          <label for="nip" class="form-label">NIP</label>
-          <input type="text" class="form-control rounded-3" name="nip" required />
+          <label for="nip" class="form-label fw-semibold">NIP</label>
+          <input
+            type="text"
+            class="form-control rounded-3"
+            name="nip"
+            id="nip"
+            placeholder="Nomor Induk Pegawai"
+            required
+          />
         </div>
-        <div class="mb-3">
-          <label for="prodi" class="form-label">Prodi</label>
-          <input type="text" class="form-control rounded-3" name="prodi" required />
+
+        <div class="mb-4">
+          <label for="prodi" class="form-label fw-semibold">Prodi</label>
+          <input
+            type="text"
+            class="form-control rounded-3"
+            name="prodi"
+            id="prodi"
+            placeholder="Program Studi"
+            required
+          />
         </div>
+
         <div class="d-flex justify-content-end gap-2">
-          <button type="submit" class="btn text-white" style="background-color: #ff00aa;">Simpan</button>
-          <a href="{{ url_for('dosen.manage_dosen') }}" class="btn btn-outline-secondary">Batal</a>
+          <a
+            href="{{ url_for('dosen.manage_dosen') }}"
+            class="btn btn-outline-secondary rounded-pill px-4"
+          >
+            <i class="bi bi-x-circle me-1"></i> Batal
+          </a>
+          <button
+            type="submit"
+            class="btn text-white rounded-pill px-4"
+            style="background-color: #ff00aa;"
+          >
+            <i class="bi bi-save me-1"></i> Simpan
+          </button>
         </div>
       </form>
     </div>
   </div>
+</div>
+{% endblock %}
