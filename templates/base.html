@@ -15,6 +15,9 @@
       <a href="{{ url_for('main.manage_users') }}" class="hover:underline"
         >User</a
       >
+      <a href="{{ url_for('main.manage_roles') }}" class="hover:underline"
+        >Role</a
+      >
       <a href="{{ url_for('main.manage_matakuliah') }}" class="hover:underline"
         >Mata Kuliah</a
       >
@@ -24,13 +27,11 @@
       <a href="{{ url_for('main.manage_mahasiswa') }}" class="hover:underline"
         >Mahasiswa</a
       >
-      {#
       <a
         href="{{ url_for('admin_jadwal.list_jadwal') }}"
         class="hover:underline"
         >Jadwal</a
       >
-      #}
     </nav>
     <div class="container mx-auto mt-6">{% block content %}{% endblock %}</div>
   </body>
