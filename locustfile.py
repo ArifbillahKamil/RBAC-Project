@@ -1,4 +1,4 @@
-from locust import HttpUser, task, between
+from locustfile import HttpUser, task, between
 
 class WebsiteUser(HttpUser):
     wait_time = between(1, 3)  # waktu tunggu antar request (detik)
